@@ -1,56 +1,39 @@
-# CLAUDE.md
+# EnjoyClaude
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## 스택
+Java 17, SpringBoot 2.7.5
 
-## 프로젝트 개요
-
-EnjoyClaude는 Spring Boot 2.7.5 기반의 WAR 패키징 웹 애플리케이션입니다.
-- Java 17 사용
-- Gradle 빌드 시스템
-- Lombok을 통한 보일러플레이트 코드 감소
-- Spring Boot DevTools로 개발 편의성 제공
-
-## 빌드 및 실행 명령어
-
-### 기본 빌드 및 실행
+## 기본 빌드 및 실행
 ```bash
-# 프로젝트 빌드
-./gradlew build
-
-# WAR 파일 빌드 (패키징)
-./gradlew war
-
-# 애플리케이션 실행 (Spring Boot)
-./gradlew bootRun
-
-# 빌드 산출물 정리
-./gradlew clean
+./gradlew build   # 프로젝트 빌드
+./gradlew war     # WAR 파일 빌드 (패키징)
+./gradlew bootRun # 애플리케이션 실행 (Spring Boot)
+./gradlew clean   # 빌드 산출물 정리
 ```
 
-### 테스트
+## 테스트
 ```bash
-# 전체 테스트 실행
-./gradlew test
-
-# 특정 테스트 클래스 실행
-./gradlew test --tests "com.enjoy.EnjoyClaude.EnjoyClaudeApplicationTests"
-
-# 특정 테스트 메서드 실행
-./gradlew test --tests "클래스명.메서드명"
+./gradlew test # 전체 테스트 실행
+./gradlew test --tests "com.enjoy.EnjoyClaude.EnjoyClaudeApplicationTests" # 특정 테스트 클래스 실행
+./gradlew test --tests "클래스명.메서드명" # 특정 테스트 메서드 실행
 ```
 
-### 개발 모드
+## 개발 모드
 ```bash
-# DevTools가 포함되어 있어 코드 변경 시 자동 재시작됩니다
-./gradlew bootRun
+./gradlew bootRun # DevTools가 포함되어 있어 코드 변경 시 자동 재시작됩니다
 ```
 
 ## 프로젝트 구조
 
-```
+```text
 src/
 ├── main/
 │   ├── java/com/enjoy/EnjoyClaude/
+│   │   ├── config                         # Spring 설정
+│   │   ├── domains                        # 도메인 레이어
+│   │   ├── infrastructures                # 인프라스트럭처 레이어
+│   │   ├── interfaces                     # 인터페이스 레이어
+│   │   ├── services                       # 서비스 레이어
 │   │   └── EnjoyClaudeApplication.java    # Spring Boot 메인 애플리케이션
 │   └── resources/
 │       └── application.yaml               # 애플리케이션 설정
@@ -60,6 +43,7 @@ src/
 ```
 
 ## 아키텍처 특징
+Layered Architecture
 
 ### 패키징 방식
 - **WAR 패키징**: `war` 플러그인 사용하여 외부 Tomcat 서버에 배포 가능
