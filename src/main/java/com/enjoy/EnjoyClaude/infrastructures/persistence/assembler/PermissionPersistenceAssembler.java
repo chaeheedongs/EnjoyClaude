@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PermissionPersistenceAssembler {
-    public Permission toDomain(PermissionEntity entity) {
+    public Permission toDomain(final PermissionEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -19,11 +19,11 @@ public class PermissionPersistenceAssembler {
         );
     }
 
-    public PermissionEntity toEntity(Permission domain) {
+    public PermissionEntity toEntity(final Permission domain) {
         if (domain == null) {
             return null;
         }
-        PermissionEntity entity = new PermissionEntity();
+        final PermissionEntity entity = new PermissionEntity();
         entity.setId(domain.getId());
         entity.setName(domain.getName());
         entity.setDescription(domain.getDescription());
@@ -32,7 +32,7 @@ public class PermissionPersistenceAssembler {
         return entity;
     }
 
-    public void updateEntity(Permission domain, PermissionEntity entity) {
+    public void updateEntity(final Permission domain, final PermissionEntity entity) {
         entity.setName(domain.getName());
         entity.setDescription(domain.getDescription());
     }

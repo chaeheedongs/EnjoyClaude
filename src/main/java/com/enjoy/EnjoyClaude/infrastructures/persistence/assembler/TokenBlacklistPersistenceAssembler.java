@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TokenBlacklistPersistenceAssembler {
-    public TokenBlacklist toDomain(TokenBlacklistEntity entity) {
+    public TokenBlacklist toDomain(final TokenBlacklistEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -18,11 +18,11 @@ public class TokenBlacklistPersistenceAssembler {
         );
     }
 
-    public TokenBlacklistEntity toEntity(TokenBlacklist domain) {
+    public TokenBlacklistEntity toEntity(final TokenBlacklist domain) {
         if (domain == null) {
             return null;
         }
-        TokenBlacklistEntity entity = new TokenBlacklistEntity();
+        final TokenBlacklistEntity entity = new TokenBlacklistEntity();
         entity.setId(domain.getId());
         entity.setToken(domain.getToken());
         entity.setExpiresAt(domain.getExpiresAt());

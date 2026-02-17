@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class RolePersistenceAssembler {
     private final PermissionPersistenceAssembler permissionAssembler;
 
-    public Role toDomain(RoleEntity entity) {
+    public Role toDomain(final RoleEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -28,11 +28,11 @@ public class RolePersistenceAssembler {
         );
     }
 
-    public RoleEntity toEntity(Role domain) {
+    public RoleEntity toEntity(final Role domain) {
         if (domain == null) {
             return null;
         }
-        RoleEntity entity = new RoleEntity();
+        final RoleEntity entity = new RoleEntity();
         entity.setId(domain.getId());
         entity.setName(domain.getName());
         entity.setDescription(domain.getDescription());
@@ -44,7 +44,7 @@ public class RolePersistenceAssembler {
         return entity;
     }
 
-    public void updateEntity(Role domain, RoleEntity entity) {
+    public void updateEntity(final Role domain, final RoleEntity entity) {
         entity.setName(domain.getName());
         entity.setDescription(domain.getDescription());
         entity.setPermissions(domain.getPermissions().stream()

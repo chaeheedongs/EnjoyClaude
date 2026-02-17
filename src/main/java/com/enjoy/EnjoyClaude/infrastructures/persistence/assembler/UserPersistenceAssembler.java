@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class UserPersistenceAssembler {
     private final RolePersistenceAssembler roleAssembler;
 
-    public User toDomain(UserEntity entity) {
+    public User toDomain(final UserEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -30,11 +30,11 @@ public class UserPersistenceAssembler {
         );
     }
 
-    public UserEntity toEntity(User domain) {
+    public UserEntity toEntity(final User domain) {
         if (domain == null) {
             return null;
         }
-        UserEntity entity = new UserEntity();
+        final UserEntity entity = new UserEntity();
         entity.setId(domain.getId());
         entity.setEmail(domain.getEmail());
         entity.setUsername(domain.getUsername());
@@ -48,7 +48,7 @@ public class UserPersistenceAssembler {
         return entity;
     }
 
-    public void updateEntity(User domain, UserEntity entity) {
+    public void updateEntity(final User domain, final UserEntity entity) {
         entity.setEmail(domain.getEmail());
         entity.setUsername(domain.getUsername());
         entity.setPassword(domain.getPassword());

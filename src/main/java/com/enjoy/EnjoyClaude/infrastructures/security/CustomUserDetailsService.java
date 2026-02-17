@@ -20,8 +20,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(email)
+    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
+        final User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + email));
 
         return org.springframework.security.core.userdetails.User.builder()
@@ -32,11 +32,11 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .build();
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities(User user) {
+    private Collection<? extends GrantedAuthority> getAuthorities(final User user) {
         return user.getRoles().stream()
                 .flatMap(role -> {
-                    var roleAuthority = new SimpleGrantedAuthority(role.getName());
-                    var permissionAuthorities = role.getPermissions().stream()
+                    final SimpleGrantedAuthority roleAuthority = new SimpleGrantedAuthority(role.getName());
+                    final java.util.List<SimpleGrantedAuthority> permissionAuthorities = role.getPermissions().stream()
                             .map(permission -> new SimpleGrantedAuthority(permission.getName()))
                             .collect(Collectors.toList());
                     permissionAuthorities.add(roleAuthority);

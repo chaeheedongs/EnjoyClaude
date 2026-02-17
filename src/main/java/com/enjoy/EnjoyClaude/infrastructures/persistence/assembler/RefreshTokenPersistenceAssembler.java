@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RefreshTokenPersistenceAssembler {
-    public RefreshToken toDomain(RefreshTokenEntity entity) {
+    public RefreshToken toDomain(final RefreshTokenEntity entity) {
         if (entity == null) {
             return null;
         }
@@ -21,11 +21,11 @@ public class RefreshTokenPersistenceAssembler {
         );
     }
 
-    public RefreshTokenEntity toEntity(RefreshToken domain) {
+    public RefreshTokenEntity toEntity(final RefreshToken domain) {
         if (domain == null) {
             return null;
         }
-        RefreshTokenEntity entity = new RefreshTokenEntity();
+        final RefreshTokenEntity entity = new RefreshTokenEntity();
         entity.setId(domain.getId());
         entity.setToken(domain.getToken());
         entity.setUserId(domain.getUserId());
