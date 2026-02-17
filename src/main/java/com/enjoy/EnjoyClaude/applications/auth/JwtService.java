@@ -2,6 +2,7 @@ package com.enjoy.EnjoyClaude.applications.auth;
 
 import com.enjoy.EnjoyClaude.domains.auth.RefreshToken;
 import com.enjoy.EnjoyClaude.domains.auth.RefreshTokenRepository;
+import com.enjoy.EnjoyClaude.domains.code.TokenType;
 import com.enjoy.EnjoyClaude.domains.common.exception.ExpiredTokenException;
 import com.enjoy.EnjoyClaude.domains.common.exception.InvalidTokenException;
 import com.enjoy.EnjoyClaude.domains.common.exception.PermissionDeniedException;
@@ -52,7 +53,7 @@ public class JwtService {
         return TokenViewResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .tokenType("Bearer")
+                .tokenType(TokenType.BEARER.getCode())
                 .expiresIn(jwtProperties.getAccessTokenValidity())
                 .build();
     }
@@ -107,7 +108,7 @@ public class JwtService {
         return TokenViewResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken)  // 새로운 Refresh Token 반환
-                .tokenType("Bearer")
+                .tokenType(TokenType.BEARER.getCode())
                 .expiresIn(jwtProperties.getAccessTokenValidity())
                 .build();
     }

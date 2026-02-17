@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
         log.error("NotFound error: ", ex);
         final ErrorViewResponse error = ErrorViewResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
-                .error("Not Found")
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .fieldErrors(null)
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         log.error("NotFound error: ", ex);
         final ErrorViewResponse error = ErrorViewResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
-                .error("Not Found")
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .fieldErrors(null)
@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
         log.error("Conflict error: ", ex);
         final ErrorViewResponse error = ErrorViewResponse.builder()
                 .status(HttpStatus.CONFLICT.value())
-                .error("Conflict")
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .fieldErrors(null)
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
         log.error("Unauthorized error: ", ex);
         final ErrorViewResponse error = ErrorViewResponse.builder()
                 .status(HttpStatus.UNAUTHORIZED.value())
-                .error("Unauthorized")
+                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .fieldErrors(null)
@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
         log.error("Forbidden error: ", ex);
         final ErrorViewResponse error = ErrorViewResponse.builder()
                 .status(HttpStatus.FORBIDDEN.value())
-                .error("Forbidden")
+                .error(HttpStatus.FORBIDDEN.getReasonPhrase())
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .fieldErrors(null)
@@ -99,7 +99,7 @@ public class GlobalExceptionHandler {
 
         final ErrorViewResponse error = ErrorViewResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
-                .error("Bad Request")
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .message("유효성 검증에 실패했습니다.")
                 .path(request.getRequestURI())
                 .fieldErrors(fieldErrors)
@@ -113,7 +113,7 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error: ", ex);
         final ErrorViewResponse error = ErrorViewResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("Internal Server Error")
+                .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                 .message("서버 내부 오류가 발생했습니다.")
                 .path(request.getRequestURI())
                 .fieldErrors(null)

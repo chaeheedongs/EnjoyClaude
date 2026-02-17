@@ -1,8 +1,10 @@
 package com.enjoy.EnjoyClaude.infrastructures.security;
 
 import com.enjoy.EnjoyClaude.domains.auth.TokenBlacklistRepository;
+import com.enjoy.EnjoyClaude.domains.code.TokenType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,11 +58,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+    private String getJwtFromRequest(final HttpServletRequest request) {
+        final String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        return TokenType.BEARER.extractToken(bearerToken);
     }
 }

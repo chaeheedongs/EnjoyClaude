@@ -1,5 +1,7 @@
 package com.enjoy.EnjoyClaude.config;
 
+import com.enjoy.EnjoyClaude.domains.code.PermissionType;
+import com.enjoy.EnjoyClaude.domains.code.RoleType;
 import com.enjoy.EnjoyClaude.domains.role.Permission;
 import com.enjoy.EnjoyClaude.domains.role.PermissionRepository;
 import com.enjoy.EnjoyClaude.domains.role.Role;
@@ -29,16 +31,16 @@ public class DataInitializer implements CommandLineRunner {
         log.info("=== 초기 데이터 생성 시작 ===");
 
         // 1. 권한 생성
-        final Permission readUsers = createPermission("READ:users", "사용자 읽기");
-        final Permission writeUsers = createPermission("WRITE:users", "사용자 쓰기");
-        final Permission readRoles = createPermission("READ:roles", "역할 읽기");
-        final Permission writeRoles = createPermission("WRITE:roles", "역할 쓰기");
-        final Permission readPosts = createPermission("READ:posts", "게시물 읽기");
-        final Permission writePosts = createPermission("WRITE:posts", "게시물 쓰기");
+        final Permission readUsers = createPermission(PermissionType.READ_USERS);
+        final Permission writeUsers = createPermission(PermissionType.WRITE_USERS);
+        final Permission readRoles = createPermission(PermissionType.READ_ROLES);
+        final Permission writeRoles = createPermission(PermissionType.WRITE_ROLES);
+        final Permission readPosts = createPermission(PermissionType.READ_POSTS);
+        final Permission writePosts = createPermission(PermissionType.WRITE_POSTS);
 
         // 2. 역할 생성
-        final Role userRole = createRole("ROLE_USER", "일반 사용자", Set.of(readPosts));
-        final Role adminRole = createRole("ROLE_ADMIN", "관리자",
+        final Role userRole = createRole(RoleType.USER, Set.of(readPosts));
+        final Role adminRole = createRole(RoleType.ADMIN,
                 Set.of(readUsers, writeUsers, readRoles, writeRoles, readPosts, writePosts));
 
         // 3. 관리자 계정 생성
@@ -60,22 +62,22 @@ public class DataInitializer implements CommandLineRunner {
         log.info("=== 초기 데이터 생성 완료 ===");
     }
 
-    private Permission createPermission(final String name, final String description) {
-        return permissionRepository.findByName(name)
+    private Permission createPermission(final PermissionType type) {
+        return permissionRepository.findByName(type.getCode())
                 .orElseGet(() -> {
-                    final Permission permission = new Permission(null, name, description, null, null);
+                    final Permission permission = new Permission(null, type.getCode(), type.getDescription(), null, null);
                     final Permission saved = permissionRepository.save(permission);
-                    log.info("권한 생성: {}", name);
+                    log.info("권한 생성: {}", type.getCode());
                     return saved;
                 });
     }
 
-    private Role createRole(final String name, final String description, final Set<Permission> permissions) {
-        return roleRepository.findByName(name)
+    private Role createRole(final RoleType type, final Set<Permission> permissions) {
+        return roleRepository.findByName(type.getCode())
                 .orElseGet(() -> {
-                    final Role role = new Role(null, name, description, permissions, null, null);
+                    final Role role = new Role(null, type.getCode(), type.getDescription(), permissions, null, null);
                     final Role saved = roleRepository.save(role);
-                    log.info("역할 생성: {}", name);
+                    log.info("역할 생성: {}", type.getCode());
                     return saved;
                 });
     }

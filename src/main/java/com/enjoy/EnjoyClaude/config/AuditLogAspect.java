@@ -1,5 +1,6 @@
 package com.enjoy.EnjoyClaude.config;
 
+import com.enjoy.EnjoyClaude.domains.code.DefaultValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -7,6 +8,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -112,7 +114,7 @@ public class AuditLogAspect {
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
             return authentication.getName();
         }
-        return "anonymous";
+        return DefaultValue.ANONYMOUS.getValue();
     }
 
     /**
@@ -129,17 +131,18 @@ public class AuditLogAspect {
      */
     private String getClientIp(final HttpServletRequest request) {
         if (request == null) {
-            return "unknown";
+            return DefaultValue.UNKNOWN.getValue();
         }
 
+        final String unknown = DefaultValue.UNKNOWN.getValue();
         String ip = request.getHeader("X-Forwarded-For");
-        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringUtils.isBlank(ip) || unknown.equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringUtils.isBlank(ip) || unknown.equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
+        if (StringUtils.isBlank(ip) || unknown.equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
 
@@ -147,7 +150,7 @@ public class AuditLogAspect {
             ip = ip.split(",")[0].trim();
         }
 
-        return StringUtils.isNotBlank(ip) ? ip : "unknown";
+        return StringUtils.isNotBlank(ip) ? ip : unknown;
     }
 
     /**
@@ -155,9 +158,9 @@ public class AuditLogAspect {
      */
     private String getUserAgent(final HttpServletRequest request) {
         if (request == null) {
-            return "unknown";
+            return DefaultValue.UNKNOWN.getValue();
         }
-        final String userAgent = request.getHeader("User-Agent");
-        return StringUtils.isNotBlank(userAgent) ? userAgent : "unknown";
+        final String userAgent = request.getHeader(HttpHeaders.USER_AGENT);
+        return StringUtils.isNotBlank(userAgent) ? userAgent : DefaultValue.UNKNOWN.getValue();
     }
 }
