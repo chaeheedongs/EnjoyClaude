@@ -7,6 +7,7 @@ import com.enjoy.EnjoyClaude.interfaces.dto.request.SignupViewRequest;
 import com.enjoy.EnjoyClaude.interfaces.dto.response.TokenViewResponse;
 import com.enjoy.EnjoyClaude.interfaces.dto.response.UserDetailViewResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +48,7 @@ public class AuthController {
 
     private String extractAccessToken(final HttpServletRequest request) {
         final String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        if (StringUtils.startsWith(bearerToken, "Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;

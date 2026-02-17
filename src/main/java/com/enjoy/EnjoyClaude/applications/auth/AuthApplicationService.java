@@ -16,6 +16,7 @@ import com.enjoy.EnjoyClaude.interfaces.dto.response.TokenViewResponse;
 import com.enjoy.EnjoyClaude.interfaces.dto.response.UserDetailViewResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -93,12 +94,12 @@ public class AuthApplicationService {
     @Transactional
     public void logout(final String refreshToken, final String accessToken) {
         // Refresh Token 삭제
-        if (refreshToken != null && !refreshToken.isEmpty()) {
+        if (StringUtils.isNotBlank(refreshToken)) {
             refreshTokenRepository.deleteByToken(refreshToken);
         }
 
         // Access Token을 블랙리스트에 추가
-        if (accessToken != null && !accessToken.isEmpty()) {
+        if (StringUtils.isNotBlank(accessToken)) {
             try {
                 jwtTokenProvider.validateToken(accessToken);
 

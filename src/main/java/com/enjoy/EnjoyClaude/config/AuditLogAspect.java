@@ -1,6 +1,7 @@
 package com.enjoy.EnjoyClaude.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -35,11 +36,11 @@ public class AuditLogAspect {
      * 인증 관련 메서드 실행 전 로깅
      */
     @Before("execution(* com.enjoy.EnjoyClaude.applications.auth.AuthApplicationService.*(..))")
-    public void logBeforeAuthOperation(JoinPoint joinPoint) {
-        String methodName = joinPoint.getSignature().getName();
-        String timestamp = LocalDateTime.now().format(FORMATTER);
-        HttpServletRequest request = getHttpServletRequest();
-        String ipAddress = getClientIp(request);
+    public void logBeforeAuthOperation(final JoinPoint joinPoint) {
+        final String methodName = joinPoint.getSignature().getName();
+        final String timestamp = LocalDateTime.now().format(FORMATTER);
+        final HttpServletRequest request = getHttpServletRequest();
+        final String ipAddress = getClientIp(request);
 
         log.info("[AUDIT] [{}] 인증 작업 시작 - 메서드: {}, IP: {}, User-Agent: {}",
                 timestamp, methodName, ipAddress, getUserAgent(request));
@@ -50,12 +51,12 @@ public class AuditLogAspect {
      */
     @AfterReturning(pointcut = "execution(* com.enjoy.EnjoyClaude.applications.auth.AuthApplicationService.*(..))",
             returning = "result")
-    public void logAfterAuthSuccess(JoinPoint joinPoint, Object result) {
-        String methodName = joinPoint.getSignature().getName();
-        String timestamp = LocalDateTime.now().format(FORMATTER);
-        String username = getCurrentUsername();
-        HttpServletRequest request = getHttpServletRequest();
-        String ipAddress = getClientIp(request);
+    public void logAfterAuthSuccess(final JoinPoint joinPoint, final Object result) {
+        final String methodName = joinPoint.getSignature().getName();
+        final String timestamp = LocalDateTime.now().format(FORMATTER);
+        final String username = getCurrentUsername();
+        final HttpServletRequest request = getHttpServletRequest();
+        final String ipAddress = getClientIp(request);
 
         log.info("[AUDIT] [{}] 인증 작업 성공 - 메서드: {}, 사용자: {}, IP: {}, 결과: {}",
                 timestamp, methodName, username, ipAddress, result != null ? result.getClass().getSimpleName() : "null");
@@ -66,11 +67,11 @@ public class AuditLogAspect {
      */
     @AfterThrowing(pointcut = "execution(* com.enjoy.EnjoyClaude.applications.auth.AuthApplicationService.*(..))",
             throwing = "exception")
-    public void logAfterAuthFailure(JoinPoint joinPoint, Throwable exception) {
-        String methodName = joinPoint.getSignature().getName();
-        String timestamp = LocalDateTime.now().format(FORMATTER);
-        HttpServletRequest request = getHttpServletRequest();
-        String ipAddress = getClientIp(request);
+    public void logAfterAuthFailure(final JoinPoint joinPoint, final Throwable exception) {
+        final String methodName = joinPoint.getSignature().getName();
+        final String timestamp = LocalDateTime.now().format(FORMATTER);
+        final HttpServletRequest request = getHttpServletRequest();
+        final String ipAddress = getClientIp(request);
 
         log.warn("[AUDIT] [{}] 인증 작업 실패 - 메서드: {}, IP: {}, 예외: {}, 메시지: {}",
                 timestamp, methodName, ipAddress,
@@ -87,16 +88,16 @@ public class AuditLogAspect {
             "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.PutMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
-    public void logApiAccess(JoinPoint joinPoint) {
-        String methodName = joinPoint.getSignature().getName();
-        String timestamp = LocalDateTime.now().format(FORMATTER);
-        String username = getCurrentUsername();
-        HttpServletRequest request = getHttpServletRequest();
+    public void logApiAccess(final JoinPoint joinPoint) {
+        final String methodName = joinPoint.getSignature().getName();
+        final String timestamp = LocalDateTime.now().format(FORMATTER);
+        final String username = getCurrentUsername();
+        final HttpServletRequest request = getHttpServletRequest();
 
         if (request != null) {
-            String uri = request.getRequestURI();
-            String method = request.getMethod();
-            String ipAddress = getClientIp(request);
+            final String uri = request.getRequestURI();
+            final String method = request.getMethod();
+            final String ipAddress = getClientIp(request);
 
             log.info("[AUDIT] [{}] API 접근 - {} {}, 메서드: {}, 사용자: {}, IP: {}",
                     timestamp, method, uri, methodName, username, ipAddress);
@@ -107,7 +108,7 @@ public class AuditLogAspect {
      * 현재 인증된 사용자명 조회
      */
     private String getCurrentUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && !"anonymousUser".equals(authentication.getPrincipal())) {
             return authentication.getName();
         }
@@ -118,7 +119,7 @@ public class AuditLogAspect {
      * HttpServletRequest 조회
      */
     private HttpServletRequest getHttpServletRequest() {
-        ServletRequestAttributes attributes =
+        final ServletRequestAttributes attributes =
                 (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         return attributes != null ? attributes.getRequest() : null;
     }
@@ -126,37 +127,37 @@ public class AuditLogAspect {
     /**
      * 클라이언트 IP 주소 조회
      */
-    private String getClientIp(HttpServletRequest request) {
+    private String getClientIp(final HttpServletRequest request) {
         if (request == null) {
             return "unknown";
         }
 
         String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+        if (StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip)) {
             ip = request.getRemoteAddr();
         }
 
-        if (ip != null && ip.contains(",")) {
+        if (StringUtils.isNotBlank(ip) && ip.contains(",")) {
             ip = ip.split(",")[0].trim();
         }
 
-        return ip != null ? ip : "unknown";
+        return StringUtils.isNotBlank(ip) ? ip : "unknown";
     }
 
     /**
      * User-Agent 조회
      */
-    private String getUserAgent(HttpServletRequest request) {
+    private String getUserAgent(final HttpServletRequest request) {
         if (request == null) {
             return "unknown";
         }
-        String userAgent = request.getHeader("User-Agent");
-        return userAgent != null ? userAgent : "unknown";
+        final String userAgent = request.getHeader("User-Agent");
+        return StringUtils.isNotBlank(userAgent) ? userAgent : "unknown";
     }
 }

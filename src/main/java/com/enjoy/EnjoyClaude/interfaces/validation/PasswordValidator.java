@@ -1,5 +1,7 @@
 package com.enjoy.EnjoyClaude.interfaces.validation;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
@@ -26,12 +28,12 @@ public class PasswordValidator implements ConstraintValidator<PasswordConstraint
     private static final Pattern SEQUENTIAL_CHARS = Pattern.compile("(abcd|bcde|cdef|defg|efgh|fghi|ghij|hijk|ijkl|jklm|klmn|lmno|mnop|nopq|opqr|pqrs|qrst|rstu|stuv|tuvw|uvwx|vwxy|wxyz|zyxw|yxwv|xwvu|wvut|vuts|utsr|tsrq|srqp|rqpo|qpon|ponm|onml|nmlk|mlkj|lkji|kjih|jihg|ihgf|hgfe|gfed|fedc|edcb|dcba)");
 
     @Override
-    public void initialize(PasswordConstraint constraintAnnotation) {
+    public void initialize(final PasswordConstraint constraintAnnotation) {
     }
 
     @Override
-    public boolean isValid(String password, ConstraintValidatorContext context) {
-        if (password == null || password.isEmpty()) {
+    public boolean isValid(final String password, final ConstraintValidatorContext context) {
+        if (StringUtils.isBlank(password)) {
             return false;
         }
 
@@ -86,7 +88,7 @@ public class PasswordValidator implements ConstraintValidator<PasswordConstraint
         return true;
     }
 
-    private void setCustomMessage(ConstraintValidatorContext context, String message) {
+    private void setCustomMessage(final ConstraintValidatorContext context, final String message) {
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
     }
