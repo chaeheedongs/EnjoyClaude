@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 @Component
 public class AuthAssembler {
-    public User fromSignupRequest(SignupViewRequest request, String encodedPassword) {
+    public User fromSignupRequest(final SignupViewRequest request, final String encodedPassword) {
         return new User(
                 null,
                 request.getEmail(),
@@ -22,17 +22,17 @@ public class AuthAssembler {
         );
     }
 
-    public UserDetailViewResponse toUserDetailResponse(User user) {
-        return new UserDetailViewResponse(
-                user.getId(),
-                user.getEmail(),
-                user.getUsername(),
-                user.getRoles().stream()
+    public UserDetailViewResponse toUserDetailResponse(final User user) {
+        return UserDetailViewResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .roles(user.getRoles().stream()
                         .map(role -> role.getName())
-                        .collect(Collectors.toSet()),
-                user.isEnabled(),
-                user.getCreatedAt(),
-                user.getUpdatedAt()
-        );
+                        .collect(Collectors.toSet()))
+                .enabled(user.isEnabled())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
+                .build();
     }
 }

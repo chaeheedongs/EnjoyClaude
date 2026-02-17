@@ -42,35 +42,35 @@ public class AuthApplicationService {
     private final AuthAssembler authAssembler;
 
     @Transactional
-    public UserDetailViewResponse signup(SignupViewRequest request) {
+    public UserDetailViewResponse signup(final SignupViewRequest request) {
         // 이메일 중복 확인
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateEmailException(request.getEmail());
         }
 
         // 사용자 생성
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        final String encodedPassword = passwordEncoder.encode(request.getPassword());
         User user = authAssembler.fromSignupRequest(request, encodedPassword);
 
         // 기본 역할 부여
         user = userService.createUserWithDefaultRole(user);
 
         // 저장
-        User savedUser = userRepository.save(user);
+        final User savedUser = userRepository.save(user);
 
         return authAssembler.toUserDetailResponse(savedUser);
     }
 
     @Transactional(readOnly = true)
-    public TokenViewResponse login(LoginViewRequest request, HttpServletRequest httpRequest) {
+    public TokenViewResponse login(final LoginViewRequest request, final HttpServletRequest httpRequest) {
         try {
             // 인증
-            Authentication authentication = authenticationManager.authenticate(
+            final Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
 
             // 사용자 조회
-            User user = userRepository.findByEmail(request.getEmail())
+            final User user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + request.getEmail()));
 
             // 활성화 확인
@@ -80,18 +80,18 @@ public class AuthApplicationService {
 
             // JWT 토큰 생성
             return jwtService.generateTokens(user, httpRequest);
-        } catch (AuthenticationException e) {
+        } catch (final AuthenticationException e) {
             throw new InvalidCredentialsException();
         }
     }
 
     @Transactional
-    public TokenViewResponse refreshToken(RefreshTokenViewRequest request, HttpServletRequest httpRequest) {
+    public TokenViewResponse refreshToken(final RefreshTokenViewRequest request, final HttpServletRequest httpRequest) {
         return jwtService.refreshAccessToken(request.getRefreshToken(), httpRequest);
     }
 
     @Transactional
-    public void logout(String refreshToken, String accessToken) {
+    public void logout(final String refreshToken, final String accessToken) {
         // Refresh Token 삭제
         if (refreshToken != null && !refreshToken.isEmpty()) {
             refreshTokenRepository.deleteByToken(refreshToken);
@@ -103,14 +103,14 @@ public class AuthApplicationService {
                 jwtTokenProvider.validateToken(accessToken);
 
                 // Access Token 유효시간만큼 블랙리스트에 보관
-                TokenBlacklist blacklistedToken = new TokenBlacklist(
+                final TokenBlacklist blacklistedToken = new TokenBlacklist(
                         null,
                         accessToken,
                         java.time.LocalDateTime.now().plusSeconds(jwtProperties.getAccessTokenValidity()),
                         java.time.LocalDateTime.now()
                 );
                 tokenBlacklistRepository.save(blacklistedToken);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 // 이미 만료된 토큰은 블랙리스트에 추가하지 않음
                 log.debug("토큰이 이미 만료되었거나 유효하지 않습니다: {}", e.getMessage());
             }

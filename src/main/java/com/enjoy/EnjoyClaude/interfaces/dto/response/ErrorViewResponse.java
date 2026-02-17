@@ -1,19 +1,21 @@
 package com.enjoy.EnjoyClaude.interfaces.dto.response;
 
-import lombok.Value;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.Map;
 
-@Value
+@Getter
 public class ErrorViewResponse {
-    LocalDateTime timestamp;
-    int status;
-    String error;
-    String message;
-    String path;
-    Map<String, String> fieldErrors;
+    private final LocalDateTime timestamp;
+    private final int status;
+    private final String error;
+    private final String message;
+    private final String path;
+    private final Map<String, String> fieldErrors;
 
+    @Builder
     public ErrorViewResponse(int status, String error, String message, String path, Map<String, String> fieldErrors) {
         this.timestamp = LocalDateTime.now();
         this.status = status;

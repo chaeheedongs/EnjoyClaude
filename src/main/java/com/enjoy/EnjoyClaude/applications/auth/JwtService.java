@@ -26,19 +26,19 @@ public class JwtService {
     private final ClientInfoExtractor clientInfoExtractor;
 
     @Transactional
-    public TokenViewResponse generateTokens(User user, HttpServletRequest request) {
-        String accessToken = tokenProvider.generateAccessToken(user.getEmail(), user.getId());
-        String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), user.getId());
+    public TokenViewResponse generateTokens(final User user, final HttpServletRequest request) {
+        final String accessToken = tokenProvider.generateAccessToken(user.getEmail(), user.getId());
+        final String refreshToken = tokenProvider.generateRefreshToken(user.getEmail(), user.getId());
 
         // 클라이언트 정보 추출
-        String ipAddress = clientInfoExtractor.getClientIpAddress(request);
-        String userAgent = clientInfoExtractor.getUserAgent(request);
+        final String ipAddress = clientInfoExtractor.getClientIpAddress(request);
+        final String userAgent = clientInfoExtractor.getUserAgent(request);
 
         // 기존 리프레시 토큰 삭제
         refreshTokenRepository.deleteByUserId(user.getId());
 
         // 새 리프레시 토큰 저장 (IP, User-Agent 포함)
-        RefreshToken refreshTokenEntity = new RefreshToken(
+        final RefreshToken refreshTokenEntity = new RefreshToken(
                 null,
                 refreshToken,
                 user.getId(),
@@ -49,21 +49,21 @@ public class JwtService {
         );
         refreshTokenRepository.save(refreshTokenEntity);
 
-        return new TokenViewResponse(
-                accessToken,
-                refreshToken,
-                "Bearer",
-                jwtProperties.getAccessTokenValidity()
-        );
+        return TokenViewResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .expiresIn(jwtProperties.getAccessTokenValidity())
+                .build();
     }
 
     @Transactional
-    public TokenViewResponse refreshAccessToken(String refreshToken, HttpServletRequest request) {
+    public TokenViewResponse refreshAccessToken(final String refreshToken, final HttpServletRequest request) {
         // 토큰 검증
         tokenProvider.validateToken(refreshToken);
 
         // 리프레시 토큰 조회
-        RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
+        final RefreshToken storedToken = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new InvalidTokenException("유효하지 않은 리프레시 토큰입니다."));
 
         // 만료 확인
@@ -73,8 +73,8 @@ public class JwtService {
         }
 
         // IP/User-Agent 검증
-        String currentIp = clientInfoExtractor.getClientIpAddress(request);
-        String currentUserAgent = clientInfoExtractor.getUserAgent(request);
+        final String currentIp = clientInfoExtractor.getClientIpAddress(request);
+        final String currentUserAgent = clientInfoExtractor.getUserAgent(request);
         if (!storedToken.matchesClientInfo(currentIp, currentUserAgent)) {
             // 클라이언트 정보가 다르면 보안상 토큰 삭제 및 거부
             refreshTokenRepository.deleteByToken(refreshToken);
@@ -82,18 +82,18 @@ public class JwtService {
         }
 
         // 새 액세스 토큰 생성
-        String email = tokenProvider.getEmailFromToken(refreshToken);
-        Long userId = tokenProvider.getUserIdFromToken(refreshToken);
-        String newAccessToken = tokenProvider.generateAccessToken(email, userId);
+        final String email = tokenProvider.getEmailFromToken(refreshToken);
+        final Long userId = tokenProvider.getUserIdFromToken(refreshToken);
+        final String newAccessToken = tokenProvider.generateAccessToken(email, userId);
 
         // ✅ Refresh Token Rotation: 새로운 Refresh Token 발급
-        String newRefreshToken = tokenProvider.generateRefreshToken(email, userId);
+        final String newRefreshToken = tokenProvider.generateRefreshToken(email, userId);
 
         // 기존 Refresh Token 삭제
         refreshTokenRepository.deleteByToken(refreshToken);
 
         // 새로운 Refresh Token 저장
-        RefreshToken newRefreshTokenEntity = new RefreshToken(
+        final RefreshToken newRefreshTokenEntity = new RefreshToken(
                 null,
                 newRefreshToken,
                 userId,
@@ -104,11 +104,11 @@ public class JwtService {
         );
         refreshTokenRepository.save(newRefreshTokenEntity);
 
-        return new TokenViewResponse(
-                newAccessToken,
-                newRefreshToken,  // 새로운 Refresh Token 반환
-                "Bearer",
-                jwtProperties.getAccessTokenValidity()
-        );
+        return TokenViewResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)  // 새로운 Refresh Token 반환
+                .tokenType("Bearer")
+                .expiresIn(jwtProperties.getAccessTokenValidity())
+                .build();
     }
 }
