@@ -15,7 +15,9 @@ public class RefreshTokenPersistenceAssembler {
                 entity.getToken(),
                 entity.getUserId(),
                 entity.getExpiresAt(),
-                entity.getCreatedAt()
+                entity.getCreatedAt(),
+                entity.getIpAddress(),
+                entity.getUserAgent()
         );
     }
 
@@ -29,6 +31,8 @@ public class RefreshTokenPersistenceAssembler {
         entity.setUserId(domain.getUserId());
         entity.setExpiresAt(domain.getExpiresAt());
         entity.setCreatedAt(domain.getCreatedAt());
+        entity.setIpAddress(domain.getIpAddress());
+        entity.setUserAgent(domain.getUserAgent());
         return entity;
     }
 }

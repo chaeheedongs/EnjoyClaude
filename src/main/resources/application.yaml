@@ -23,9 +23,9 @@ spring:
       path: /h2-console
 
 jwt:
-  secret: your-256-bit-secret-key-change-this-in-production-environment-please
-  access-token-validity: 3600
-  refresh-token-validity: 2592000
+  secret: 2x6hojHsy7iiVfFs5ncUNchtMMBQZ+eUCkzHaWM7Iqx2RBjmFSNJt9EEo3M35ras/QnnYnWzJETLGuhuP+QEBQ==
+  access-token-validity: 900        # 15분 (OWASP 권장)
+  refresh-token-validity: 604800    # 7일 (보안 강화)
 
 logging:
   level:

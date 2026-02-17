@@ -15,6 +15,8 @@ public class RefreshToken {
     private Long userId;
     private LocalDateTime expiresAt;
     private LocalDateTime createdAt;
+    private String ipAddress;      // IP 주소 추가
+    private String userAgent;      // User-Agent 추가
 
     public boolean isExpired() {
         return LocalDateTime.now().isAfter(expiresAt);
@@ -24,5 +26,10 @@ public class RefreshToken {
         if (isExpired()) {
             throw new IllegalStateException("토큰이 만료되었습니다.");
         }
+    }
+
+    // IP/User-Agent 검증 메서드
+    public boolean matchesClientInfo(String ipAddress, String userAgent) {
+        return this.ipAddress.equals(ipAddress) && this.userAgent.equals(userAgent);
     }
 }

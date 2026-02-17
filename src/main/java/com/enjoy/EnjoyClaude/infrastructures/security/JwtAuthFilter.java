@@ -1,5 +1,6 @@
 package com.enjoy.EnjoyClaude.infrastructures.security;
 
+import com.enjoy.EnjoyClaude.domains.auth.TokenBlacklistRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,7 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtTokenProvider tokenProvider;
     private final CustomUserDetailsService userDetailsService;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -30,6 +32,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt)) {
+                // 블랙리스트 확인
+                if (tokenBlacklistRepository.existsByToken(jwt)) {
+                    log.warn("블랙리스트에 등록된 토큰입니다: {}", jwt.substring(0, 20) + "...");
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 tokenProvider.validateToken(jwt);
                 String email = tokenProvider.getEmailFromToken(jwt);
 

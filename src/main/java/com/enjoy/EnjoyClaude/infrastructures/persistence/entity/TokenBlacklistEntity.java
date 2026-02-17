@@ -11,13 +11,13 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "refresh_tokens")
+@Table(name = "token_blacklist")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class RefreshTokenEntity {
+public class TokenBlacklistEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,18 +26,9 @@ public class RefreshTokenEntity {
     private String token;
 
     @Column(nullable = false)
-    private Long userId;
-
-    @Column(nullable = false)
     private LocalDateTime expiresAt;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(length = 45)  // IPv6 최대 길이
-    private String ipAddress;
-
-    @Column(length = 500)
-    private String userAgent;
 }
