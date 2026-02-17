@@ -30,3 +30,15 @@ jwt:
 logging:
   level:
     com.enjoy.EnjoyClaude: DEBUG
+
+# 보안 설정 (ISMS 감사 대응)
+security:
+  expose-error-details: false  # 프로덕션에서는 false로 설정
+
+# Spring Boot 보안 설정
+server:
+  error:
+    include-message: never           # 에러 메시지 노출 방지
+    include-binding-errors: never    # 바인딩 에러 노출 방지
+    include-stacktrace: never        # 스택 트레이스 노출 방지
+    include-exception: false         # 예외 클래스명 노출 방지
